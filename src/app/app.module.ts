@@ -5,18 +5,20 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { CategoryPanelComponent } from './category-panel/category-panel.component';
+import { CategoryService } from './category.service';
+import { AuthService } from './auth.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CategoryPanelComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent,
+		CategoryPanelComponent,
+	],
+	imports: [
+		BrowserModule,
+		FormsModule,
+		HttpModule
+	],
+	providers: [CategoryService, AuthService],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }
