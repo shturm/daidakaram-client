@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ProductService } from '../product.service';
 import { CategoryService } from '../category.service';
 import { Product } from '../product';
@@ -13,13 +13,14 @@ export class ProductListComponent implements OnInit {
 
 	@Input() pageNumber: number = 1;
 	@Input() pageSize: number = 15;
+	@Output() onSubmitProduct = new EventEmitter<Product>();
 	private products: Array<Product>;
 	private categories: Array<Category>;
 
 	product: Product;
 
 	constructor(private productService: ProductService,
-						  private categoryService: CategoryService) { }
+							private categoryService: CategoryService) { }
 
 	ngOnInit() {
 		this.goToPage(this.pageNumber);
@@ -33,18 +34,23 @@ export class ProductListComponent implements OnInit {
 		let result = [];
 		let pageSetLength = 10;
 		let latestAdded: number;
-		for (let i = this.pageNumber-1; i > 0 && i >= this.pageNumber - pageSetLength/2; i--) {
+		// add before
+		for (let i = this.pageNumber - 1; i > 0 && i >= this.pageNumber - pageSetLength / 2; i--) {
 			result.push(i);
 		}
+
 		result.push(this.pageNumber);
-		for (let i = this.pageNumber+1; i <= this.pageNumber+pageSetLength/2; i++) {
+
+		// add after
+		for (let i = this.pageNumber + 1; i <= this.pageNumber + pageSetLength / 2; i++) {
 			result.push(i);
 			latestAdded = i;
 		}
+
 		while (result.length < pageSetLength) {
 			result.push(latestAdded++);
 		}
-		result.sort((a,b) => a-b);
+		result.sort((a, b) => a - b);
 
 		return result;
 	}
@@ -54,6 +60,28 @@ export class ProductListComponent implements OnInit {
 		this.productService.getPage(pageNumber).then((products) => {
 			this.products = products;
 		});
+	}
+
+	changeProductCategory(categoryId: number) {
+		this.product.categoryId = categoryId;
+		this.product.categoryName = this.getSubCategoryNameById(categoryId);
+	}
+
+	submitProduct(p: Product) {
+		this.onSubmitProduct.emit(p);
+		this.productService.updateProduct(p);
+	}
+
+	private getSubCategoryNameById(subCategoryId: number): string {
+		for (let i = 0; i < this.categories.length; i++) {
+			let c = this.categories[i];
+			for (let scidx = 0; scidx < c.subCategories.length; scidx++) {
+				let sc = c.subCategories[scidx];
+				if (sc.id == subCategoryId) {
+					return sc.name;
+				}
+			}
+		}
 	}
 
 }

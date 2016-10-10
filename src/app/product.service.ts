@@ -12,11 +12,24 @@ export class ProductService {
 
 	getPage(pageNumber: number): Promise<Array<Product>> {
 		return new Promise((resolve, reject) => {
-			this.http.get(env.apiUrl+'product?pageNumber='+pageNumber).toPromise()
+			this.http.get(env.apiUrl + 'product?pageNumber=' + pageNumber).toPromise()
 			.then(products => {
 				resolve(products.json());
 			}, error => {
 				this.handleError(error);
+				reject(error);
+			});
+		});
+	}
+
+	updateProduct(p: Product): Promise<any> {
+		delete p['$id'];
+		return new Promise ((resolve, reject) => {
+			this.http.put(env.apiUrl + 'product', p).toPromise().then(() => {
+				resolve();
+			}, error => {
+				this.handleError(error);
+				reject(error);
 			});
 		});
 	}

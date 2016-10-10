@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptionsArgs } from '@angular/http';
 
-import {environment as env} from '../environments/environment';
+import { environment as env } from '../environments/environment';
 import 'rxjs/add/operator/toPromise';
 
 import { Category } from './category';
@@ -9,13 +9,26 @@ import { Category } from './category';
 @Injectable()
 export class CategoryService {
 
-	constructor(private http: Http) {}
+	constructor(private http: Http) { }
 
 	getRootCategories(): Promise<Array<Category>> {
 		let result = new Promise((resolve, reject) => {
-			this.http.get(env.apiUrl+'category/roots').toPromise()
+			this.http.get(env.apiUrl + 'category/roots').toPromise()
 				.then(cats => {
-					resolve(cats.json());
+					let parsed = cats.json();
+					for (let idx = 0; idx < parsed.length; idx++) {
+						let c = parsed[idx];
+						for (var scidx = 0; scidx < c.subCategories.length; scidx++) {
+							let sc = c.subCategories[scidx];
+							sc.parent = {
+								id: c.id,
+								name: c.name,
+							};
+						}
+					}
+
+					resolve(parsed);
+
 				}, error => {
 					this.handleError(error);
 				})
@@ -26,7 +39,7 @@ export class CategoryService {
 	addCategory(name: string): Promise<Category> {
 		let c = new Category(name);
 		let result = new Promise((resolve, reject) => {
-			this.http.post(env.apiUrl+'category', c).toPromise()
+			this.http.post(env.apiUrl + 'category', c).toPromise()
 				.then((category) => {
 					resolve(category.json());
 				}, (error) => {
@@ -38,7 +51,7 @@ export class CategoryService {
 
 	update(c: Category): Promise<Category> {
 		let result = new Promise((resolve, reject) => {
-			this.http.put(env.apiUrl+'category', c).toPromise()
+			this.http.put(env.apiUrl + 'category', c).toPromise()
 				.then((category) => {
 					resolve(category.json());
 				}, (error) => {
@@ -50,7 +63,7 @@ export class CategoryService {
 
 	delete(c: Category): Promise<any> {
 		let result = new Promise((resolve, reject) => {
-			this.http.delete(env.apiUrl+'category/delete/'+c.id,).toPromise()
+			this.http.delete(env.apiUrl + 'category/delete/' + c.id, ).toPromise()
 				.then(() => {
 					resolve();
 				}, (error) => {
@@ -62,7 +75,7 @@ export class CategoryService {
 
 	handleError(error: any) {
 		try {
-			console.error(error);			
+			console.error(error);
 		} catch (e) {
 			console.error('could not log to console an error. Attempting stringification');
 			try {

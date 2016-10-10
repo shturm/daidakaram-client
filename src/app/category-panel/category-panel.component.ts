@@ -18,7 +18,6 @@ export class CategoryPanelComponent implements OnInit {
 	constructor(private categoryService: CategoryService) { }
 
 	ngOnInit() {
-		console.log("category",this.category);
 	}
 
 	addSubCategory(name: string) {
