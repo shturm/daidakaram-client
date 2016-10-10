@@ -34,6 +34,8 @@ export class ProductListComponent implements OnInit {
 		let result = [];
 		let pageSetLength = 10;
 		let latestAdded: number;
+		this.pageNumber = parseInt(this.pageNumber.toString());
+
 		// add before
 		for (let i = this.pageNumber - 1; i > 0 && i >= this.pageNumber - pageSetLength / 2; i--) {
 			result.push(i);
