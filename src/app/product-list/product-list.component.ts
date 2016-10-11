@@ -69,9 +69,9 @@ export class ProductListComponent implements OnInit {
 		this.product.categoryName = this.getSubCategoryNameById(categoryId);
 	}
 
-	submitProduct(p: Product) {
-		this.onSubmitProduct.emit(p);
-		this.productService.updateProduct(p);
+	submitProduct() {
+		this.onSubmitProduct.emit(this.product);
+		this.productService.updateProduct(this.product);
 	}
 
 	private getSubCategoryNameById(subCategoryId: number): string {
