@@ -9,6 +9,7 @@ import { CategoryPanelComponent } from './category-panel/category-panel.componen
 import { CategoryService } from './category.service';
 import { AuthService } from './auth.service';
 import { ProductService } from './product.service';
+import { CompatibilityService } from './compatibility.service';
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import { ProductService } from './product.service';
 		FormsModule,
 		HttpModule
 	],
-	providers: [CategoryService, AuthService, ProductService],
+	providers: [CategoryService, AuthService, ProductService, CompatibilityService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

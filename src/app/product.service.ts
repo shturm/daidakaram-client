@@ -12,7 +12,7 @@ export class ProductService {
 
 	getPage(pageNumber: number): Promise<Array<Product>> {
 		return new Promise((resolve, reject) => {
-			this.http.get(env.apiUrl + 'product?pageNumber=' + pageNumber).toPromise()
+			this.http.get(env.apiUrl + 'product/page?pageNumber=' + pageNumber).toPromise()
 			.then(products => {
 				resolve(products.json());
 			}, error => {
