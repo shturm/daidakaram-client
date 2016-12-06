@@ -17,22 +17,14 @@ export class ProductListComponent implements OnInit {
 	@Output() onSubmitProduct = new EventEmitter<Product>();
 	private products: Array<Product>;
 	private categories: Array<Category>;
-	
+
 	private makes: Array<string>;
 	private models: Array<string>;
 	private variants: Array<string>;
-	private bodies: Array<string>;
-	private yearFrom: number;
-	private yearTo: number;
-	private types: Array<string>;
 
-	private make: string;
-	private model: string;
+	private chosenMake: string;
+	private chosenModel: string;
 	private chosenVariants: Array<string>;
-	private chosenBodies: Array<string>;
-	private chosenYearFrom: number;
-	private chosenYearTo: number;
-	private chosenTypes: Array<string>;
 
 	product: Product;
 
@@ -79,9 +71,9 @@ export class ProductListComponent implements OnInit {
 		return result;
 	}
 
-	goToPage(pageNumber: number) {
+	goToPage(pageNumber: number): Promise<any> {
 		this.pageNumber = pageNumber;
-		this.productService.getPage(pageNumber).then((products) => {
+		return this.productService.getPage(pageNumber).then((products) => {
 			this.products = products;
 		});
 	}
@@ -100,12 +92,9 @@ export class ProductListComponent implements OnInit {
 		this.compatibilityService.getModels(make).then(models => {
 			this.models = models;
 
-			this.model = "";
-			this.variants = this.chosenVariants = [];
-			this.bodies = this.chosenBodies = [];
-			this.types = this.chosenTypes = [];
-			this.yearFrom = this.chosenYearFrom = 0;
-			this.yearTo = this.chosenYearTo = 0;
+			this.chosenModel = '';
+			this.variants = [];
+			this.chosenVariants = [];
 		});
 	}
 
@@ -115,31 +104,6 @@ export class ProductListComponent implements OnInit {
 			this.chosenVariants = [];
 			this.toggleAllVariants();
 		});
-
-		this.compatibilityService.getBodies(make, model).then(bodies => {
-			this.bodies = bodies;
-			this.chosenBodies = [];
-			this.toggleAllBodies();
-		});
-
-		this.compatibilityService.getYearFrom(make, model).then(yearFrom => {
-			this.yearFrom = this.chosenYearFrom = yearFrom;
-		});
-
-		this.compatibilityService.getYearTo(make, model).then(yearTo => {
-			this.yearTo = this.chosenYearTo = yearTo;
-		});
-
-		this.compatibilityService.getTypes(make, model).then(types => {
-			this.types = types;
-			this.chosenTypes = [];
-			this.toggleAllTypes();
-		});
-	}
-
-	resetYears() {
-		this.chosenYearFrom = this.yearFrom;
-		this.chosenYearTo = this.yearTo;
 	}
 
 	updateVariant(v: string) {
@@ -147,7 +111,7 @@ export class ProductListComponent implements OnInit {
 		if (idx === -1) {
 			this.chosenVariants.push(v);
 		} else {
-			this.chosenVariants.splice(idx,1);
+			this.chosenVariants.splice(idx, 1);
 		}
 	}
 
@@ -163,46 +127,26 @@ export class ProductListComponent implements OnInit {
 		}
 	}
 
-	updateBody(b: string) {
-		let idx = this.chosenBodies.indexOf(b);
-		if (idx === -1) {
-			this.chosenBodies.push(b);
-		} else {
-			this.chosenBodies.splice(idx,1);
-		}
+	resetCompatibility() {
+		this.chosenMake = '';
+		this.chosenModel = '';
+		this.chosenVariants = this.variants = [];
 	}
 
-	toggleAllBodies() {
-		if (this.chosenBodies.length !== this.bodies.length) {
-			this.chosenBodies = [];
-			for (let i = 0; i < this.bodies.length; i++) {
-				let b = this.bodies[i];
-				this.chosenBodies.push(b);
+	createCompatibility() {
+
+		this.compatibilityService
+		.createCompatibility(this.product.id, this.chosenMake, this.chosenModel, this.chosenVariants)
+		.then(() 		=> this.goToPage(this.pageNumber).then(()=>{
+			for (let i = 0; i < this.products.length; i++) {
+				let p = this.products[i];
+				if (p.id === this.product.id) {
+					this.product = p;
+					break;
+				}
 			}
-		} else {
-			this.chosenBodies = [];
-		}
-	}
-
-	updateType(t: string) {
-		let idx = this.chosenTypes.indexOf(t);
-		if (idx === -1) {
-			this.chosenTypes.push(t);
-		} else {
-			this.chosenTypes.splice(idx,1);
-		}
-	}
-
-	toggleAllTypes() {
-		if (this.chosenTypes.length !== this.types.length) {
-			this.chosenTypes = [];
-			for (let i = 0; i < this.types.length; i++) {
-				let t = this.types[i];
-				this.chosenTypes.push(t);
-			}
-		} else {
-			this.chosenTypes = [];
-		}
+		}),
+			  (error) 	=> console.log(error));
 	}
 
 	private getSubCategoryNameById(subCategoryId: number): string {
@@ -210,7 +154,7 @@ export class ProductListComponent implements OnInit {
 			let c = this.categories[i];
 			for (let scidx = 0; scidx < c.subCategories.length; scidx++) {
 				let sc = c.subCategories[scidx];
-				if (sc.id == subCategoryId) {
+				if (sc.id === subCategoryId) {
 					return sc.name;
 				}
 			}

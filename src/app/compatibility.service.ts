@@ -10,6 +10,7 @@ export class CompatibilityService {
 
 	constructor(private http: Http) { }
 
+
 	getMakes(): Promise<Array<string>> {
 		return new Promise((resolve, reject) => {
 			this.http.get(env.apiUrl + 'compatibility/getMakes').toPromise().then(makes => {
@@ -47,63 +48,24 @@ export class CompatibilityService {
 		});
 	}
 
-	getBodies(make: string, model: string): Promise<Array<string>> {
-		if (!make) return Promise.reject("Invalid make");
-		if (!model) return Promise.reject("Invalid model");
-
-		return new Promise((resolve, reject) => {
-			let url: string = env.apiUrl + 'compatibility/getBodies?make=' + make + "&model=" + model;
-
-			this.http.get(url).toPromise().then(result => {
-				resolve(result.json());
-			}, error => {
+	createCompatibility(productId:number,
+						make: string,
+						model: string,
+						variants: Array<string>): Promise<boolean> {
+		let url: string = env.apiUrl + 'compatibility';
+		let data = {
+			productId: productId,
+			make: make,
+			model: model,
+			variants: variants
+		};
+		return new Promise((resolve,reject) => {
+			this.http.post(url, data).toPromise().then(() => {
+				resolve(true);
+			}, (error) => {
 				reject(error);
 			});
 		});
 	}
 
-	getYearFrom(make: string, model: string): Promise<number> {
-		if (!make) return Promise.reject("Invalid make");
-		if (!model) return Promise.reject("Invalid model");
-
-		return new Promise((resolve, reject) => {
-			let url: string = env.apiUrl + 'compatibility/getYearFrom?make=' + make + "&model=" + model;
-
-			this.http.get(url).toPromise().then(result => {
-				resolve(result.json());
-			}, error => {
-				reject(error);
-			});
-		});
-	}
-
-	getYearTo(make: string, model: string): Promise<number> {
-		if (!make) return Promise.reject("Invalid make");
-		if (!model) return Promise.reject("Invalid model");
-
-		return new Promise((resolve, reject) => {
-			let url: string = env.apiUrl + 'compatibility/getYearTo?make=' + make + "&model=" + model;
-
-			this.http.get(url).toPromise().then(result => {
-				resolve(result.json());
-			}, error => {
-				reject(error);
-			});
-		});
-	}
-
-	getTypes(make: string, model: string): Promise<Array<string>> {
-		if (!make) return Promise.reject("Invalid make");
-		if (!model) return Promise.reject("Invalid model");
-
-		return new Promise((resolve, reject) => {
-			let url: string = env.apiUrl + 'compatibility/getTypes?make=' + make + "&model=" + model;
-
-			this.http.get(url).toPromise().then(result => {
-				resolve(result.json());
-			}, error => {
-				reject(error);
-			});
-		});
-	}
 }

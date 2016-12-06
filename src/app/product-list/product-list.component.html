@@ -73,30 +73,14 @@
 		<hr>
 		<h4>Съвместимост</h4>
 		<div class="form-group" style="width: 100%">
-			<select [(ngModel)]="make" 
+			<select [(ngModel)]="chosenMake" 
 					(change)="onMakeChange($event.target.value)" name="make" class="form-control" style="width: 50%">
 					<option value="" disabled>Марка</option> <option *ngFor="let m of makes" [value]="m">{{m}}</option></select>
-			<select [(ngModel)]="model" 
-					(change)="onModelChange(make, $event.target.value)" 
-					[disabled]="make == null || make.length == 0" name="model" class="form-control" style="width: 49%" disabled><option value="" disabled>Модел</option><option *ngFor="let m of models" [value]="m">{{m}}</option></select>
-			<!--<select [(ngModel)]="variant" 
-					[disabled]="model == null || model.length == 0" name="variant" class="form-control" style="width: 31%" disabled><option value="" disabled>Вариант</option><option *ngFor="let v of variants" [value]="v">{{v}}</option></select>-->
+			<select [(ngModel)]="chosenModel" 
+					(change)="onModelChange(chosenMake, $event.target.value)" 
+					[disabled]="chosenMake == null || chosenMake.length == 0" name="model" class="form-control" style="width: 49%" disabled><option value="" disabled>Модел</option><option *ngFor="let m of models" [value]="m">{{m}}</option></select>
 		</div>
-		<div class="form-group" style="width: 100%" *ngIf="yearFrom > 0">
-			<div class="input-group" style="width: 44%">
-				<span class="input-group-addon" id="basic-addon1">От</span>
-				<input [(ngModel)]="chosenYearFrom" name="yearFrom" type="number" class="form-control" placeholder="Година" aria-describedby="basic-addon2">
-				<span class="input-group-addon" id="basic-addon2">г.</span>
-			</div>
-			<div class="input-group" style="width: 44%">
-				<span class="input-group-addon" id="basic-addon1">До</span>
-				<input [(ngModel)]="chosenYearTo" name="yearTo" type="number" class="form-control" placeholder="Година" aria-describedby="basic-addon2">
-				<span class="input-group-addon" id="basic-addon2">г.</span>
-			</div>
-			
-			<button (click)="resetYears()" type="button" class="btn btn-small btn-warning"><span class="glyphicon glyphicon-refresh"></span></button>
-			
-		</div>
+
 		<div class="form-group" style="width: 100%" *ngIf="variants?.length > 1">
 			<p>Вариант: 
 				<button (click)="toggleAllVariants()" type="button" class="btn btn-xs">Всички</button> 
@@ -105,21 +89,36 @@
 				<input [checked]="chosenVariants.indexOf(v) != -1" 
 					   (change)="updateVariant(v)" type="checkbox" name="variants">{{v}}</label>
 		</div>
-		<div class="form-group" style="width: 100%" *ngIf="bodies?.length > 1">
-			<p>Купе: <button (click)="toggleAllBodies()" type="button" class="btn btn-xs">Всички</button></p>
-			<label *ngFor="let b of bodies">
-				<input [checked]="chosenBodies.indexOf(b) != -1" 
-					   (change)="updateBody(b)" type="checkbox" name="bodies">{{b}}</label>
-		</div>
-		<div class="form-group" style="width: 100%" *ngIf="types?.length > 1">
-			<p>Тип: <button (click)="toggleAllTypes()" type="button" class="btn btn-xs">Всички</button></p>
-			<label *ngFor="let t of types">
-				<input [checked]="chosenTypes.indexOf(t) != -1" 
-					   (change)="updateType(t)" type="checkbox" name="types">{{t}}</label>
-		</div>
-
-
-	
+		
+		<button (click)="createCompatibility()" 
+				[disabled]="chosenVariants?.length == 0 && variants?.length > 1 || !chosenModel || !chosenMake" type="button" class="btn btn-success">Запази настройка за съвместимост</button>
+		<button (click)="resetCompatibility()" type="button" class="btn btn-warning">Изчисти</button>
+			
 	</form>
+	
+</div>
+
+
+<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" *ngIf="product?.compatibilitySettings?.length > 0">
+	
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Марка</th>
+				<th>Модел</th>
+				<th>Вариант</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let c of product?.compatibilitySettings">
+				<td>{{c.make}}</td>
+				<td>{{c.model}}</td>
+				<td *ngIf="c.variant">{{c.variant}}</td>
+				<td *ngIf="!c.variant"><i>&lt;всички&gt;</i></td>
+				<!--<td><button ()="if(confirm('Изтриване ?')) deleteCompatibilityRow(c.id)" type="button" class="btn btn-small btn-danger"><span class="glyphicon glyphicon-remove"></span></button></td>-->
+			</tr>
+		</tbody>
+	</table>
 	
 </div>
