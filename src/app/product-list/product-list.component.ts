@@ -146,7 +146,23 @@ export class ProductListComponent implements OnInit {
 				}
 			}
 		}),
-			  (error) 	=> console.log(error));
+			(error) 	=> console.log(error));
+	}
+
+	deleteCompatibilitySetting(settingId: string) {
+		if (!confirm('Изтриване ?')) {
+			return;
+		}
+
+		this.compatibilityService.deleteCompatibilitySetting(settingId)
+		.then(() => {
+			// delete setting from local product
+			for(let i=0;i < this.product.compatibilitySettings.length; i++) {
+				if (settingId == this.product.compatibilitySettings[i].id) {
+					this.product.compatibilitySettings.splice(i,1);
+				}
+			}
+		})
 	}
 
 	private getSubCategoryNameById(subCategoryId: number): string {

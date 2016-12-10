@@ -68,4 +68,11 @@ export class CompatibilityService {
 		});
 	}
 
+	deleteCompatibilitySetting(settingId: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.http.delete(env.apiUrl+'compatibility?settingId='+settingId).toPromise()
+			.then(() => resolve(), (error)=> reject(error));
+		});
+	}
+
 }
