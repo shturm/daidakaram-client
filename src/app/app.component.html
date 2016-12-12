@@ -13,10 +13,12 @@
 	<!-- Collect the nav links, forms, and other content for toggling -->
 	<div class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="#">Link</a></li>
-			<li><a href="#">Link</a></li>
+			<li><a routerLink="/categories" routerLinkActive="active" href="#">Категории</a></li>
+			<li><a routerLink="/products" routerLinkActive="active" href="#">Продукти</a></li>
+			<li><a routerLink="/login" routerLinkActive="active" href="#">Вход</a></li>
+			<li><a routerLink="/logout" href="#">Изход</a></li>
 		</ul>
-		<form class="navbar-form navbar-left" role="search">
+		<!--<form class="navbar-form navbar-left" role="search">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="Search">
 			</div>
@@ -33,36 +35,12 @@
 					<li><a href="#">Separated link</a></li>
 				</ul>
 			</li>
-		</ul>
+		</ul>-->
 	</div>
 	<!-- /.navbar-collapse -->
 </nav>
 
 <div class="container-fluid">
-	<!--<div class="row">
-		<app-category-panel *ngFor="let c of categories" (onDelete)="updateCategoryPanels()" [category]="c"></app-category-panel>
-		<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h2 class="panel-title">Нова категория</h2>
-				</div>
-				<div class="panel-body">
-					<div class="input-group">
-						<input #newCategory type="text" class="form-control" placeholder="Нова категория">
-						<span class="input-group-btn">
-						<button (click)="addCategory(newCategory.value);newCategory.value=''" class="btn btn-success" type="button">
-							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-						</button>
-						</span>
-					</div>
 
-				</div>
-			</div>
-		</div>
-	</div>-->
-
-	<hr>
-	<div class="row">
-		<app-product-list [pageNumber]="1"></app-product-list>
-	</div>
+	<router-outlet></router-outlet>
 </div>

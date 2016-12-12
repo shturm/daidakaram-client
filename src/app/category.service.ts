@@ -20,10 +20,7 @@ export class CategoryService {
 						let c = parsed[idx];
 						for (var scidx = 0; scidx < c.subCategories.length; scidx++) {
 							let sc = c.subCategories[scidx];
-							sc.parent = {
-								id: c.id,
-								name: c.name,
-							};
+							sc.parent = new Category(c.name, c.id);
 						}
 					}
 
@@ -37,7 +34,7 @@ export class CategoryService {
 	}
 
 	addCategory(name: string): Promise<Category> {
-		let c = new Category(name);
+		let c = new Category(name,0);
 		let result = new Promise((resolve, reject) => {
 			this.http.post(env.apiUrl + 'category', c).toPromise()
 				.then((category) => {

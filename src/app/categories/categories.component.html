@@ -1,0 +1,22 @@
+<div class="row">
+	
+	<app-category-panel *ngFor="let c of categories" (onDelete)="updateCategoryPanels()" [category]="c"></app-category-panel>
+	
+	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Нова категория</h2>
+			</div>
+			<div class="panel-body">
+				<div class="input-group">
+					<input #newCategory type="text" class="form-control" placeholder="Нова категория">
+					<span class="input-group-btn">
+						<button (click)="addCategory(newCategory.value);newCategory.value=''" class="btn btn-success" type="button">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+					</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -12,7 +12,8 @@ export class CategoryPanelComponent implements OnInit {
 	@Input() category: Category;
 	@Output() onDelete = new EventEmitter<Category>();
 
-	
+	expand: boolean = false;
+	subCategoriesThrehold: number = 13;
 	// updateMode: boolean = false;
 
 	constructor(private categoryService: CategoryService) { }
@@ -21,8 +22,9 @@ export class CategoryPanelComponent implements OnInit {
 	}
 
 	addSubCategory(name: string) {
-		let subCategory = new Category(name);
-		subCategory.parent = {id: this.category.id};
+		let subCategory = new Category(name, 0);
+		// subCategory.parent = {id: this.category.id};
+		subCategory.parent = new Category(null, this.category.id);
 
 		this.category.subCategories.push(subCategory);
 		this.categoryService.update(this.category).then((updatedCategory)=>{
@@ -37,7 +39,7 @@ export class CategoryPanelComponent implements OnInit {
 	}
 
 	updateSubCategory(c: Category) {
-		c.parent = {id: this.category.id};
+		c.parent = new Category(null, this.category.id);
 		this.categoryService.update(c).then((updatedCategory)=>{
 			c = updatedCategory;
 		});
@@ -57,6 +59,15 @@ export class CategoryPanelComponent implements OnInit {
 
 	toggleUpdateMode(c: Category) {
 		c.updateMode = !c.updateMode;
+	}
+
+	subCategories(c: Category): Array<Category> {
+		if (this.expand) return c.subCategories;
+		return c.subCategories.slice(0, this.subCategoriesThrehold);
+	}
+
+	showExpandButton() {
+		return this.category.subCategories.length > this.subCategoriesThrehold;
 	}
 
 }
